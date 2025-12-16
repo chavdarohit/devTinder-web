@@ -8,6 +8,7 @@ import { API_BASE_URL } from "../utils/constants";
 const Login = () => {
   const [email, setEmail] = useState("rohit@gmail.com");
   const [password, setPassword] = useState("Rohit@123");
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -24,7 +25,13 @@ const Login = () => {
       dispatch(addUser(res.data.user));
       navigate("/feed");
     } catch (err) {
-      console.error(err);
+      if (err.response && err.response.data && err.response.data) {
+        setError(err?.response?.data || "Login failed. Please try again.");
+        setEmail("");
+        setPassword("");
+      } else {
+        setError("Something went wrong. Please try again later.");
+      }
     }
   };
 
@@ -48,7 +55,7 @@ const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-
+        <p className="text-red-500">{error}</p>
         <button className="btn btn-neutral mt-4" onClick={handleLogin}>
           Login
         </button>
