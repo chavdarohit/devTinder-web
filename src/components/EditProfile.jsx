@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { API_BASE_URL } from "../utils/constants";
 import { addUser } from "../utils/userSlice";
 import UserCard from "./UserCard";
+import Toast from "./Toast";
 
 const EditProfile = ({ user }) => {
   const dispatch = useDispatch();
@@ -24,8 +25,8 @@ const EditProfile = ({ user }) => {
   const [skills, setSkills] = useState(user.skills?.join(", ") || "");
   const [age, setAge] = useState(user.age || "");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [isChanged, setIsChanged] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   // Check if form has changed
   useEffect(() => {
@@ -42,7 +43,6 @@ const EditProfile = ({ user }) => {
 
   const handleUpdate = async () => {
     setError("");
-    setSuccess("");
 
     try {
       const skillsArray = skills
@@ -63,7 +63,10 @@ const EditProfile = ({ user }) => {
         { withCredentials: true }
       );
       dispatch(addUser(res.data));
-      setSuccess("Profile updated successfully!");
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
 
       // Update initial data after successful save
       setInitialData({
@@ -86,93 +89,100 @@ const EditProfile = ({ user }) => {
   };
 
   return (
-    <div className="flex justify-center align-center my-10">
-      <div className="flex justify-center mx-10">
-        <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-384 max-w-md border p-4">
-          <legend className="fieldset-title text-2xl font-bold mb-4">
-            Edit Profile
-          </legend>
+    <>
+      <div className="flex justify-center align-center my-10">
+        <div className="flex justify-center mx-10">
+          <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-384 max-w-md border p-4">
+            <legend className="fieldset-title text-2xl font-bold mb-4">
+              Edit Profile
+            </legend>
 
-          <label className="label">First Name</label>
-          <input
-            type="text"
-            className="input w-full"
-            placeholder="First Name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-          />
+            <label className="label">First Name</label>
+            <input
+              type="text"
+              className="input w-full"
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
 
-          <label className="label">Last Name</label>
-          <input
-            type="text"
-            className="input w-full"
-            placeholder="Last Name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-          />
+            <label className="label">Last Name</label>
+            <input
+              type="text"
+              className="input w-full"
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
 
-          <label className="label">Age</label>
-          <input
-            type="text"
-            className="input w-full"
-            placeholder="Age"
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-          />
+            <label className="label">Age</label>
+            <input
+              type="text"
+              className="input w-full"
+              placeholder="Age"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+            />
 
-          <label className="label">Photo URL</label>
-          <input
-            type="url"
-            className="input w-full"
-            placeholder="Photo URL"
-            value={photoUrl}
-            onChange={(e) => setPhotoUrl(e.target.value)}
-          />
+            <label className="label">Photo URL</label>
+            <input
+              type="url"
+              className="input w-full"
+              placeholder="Photo URL"
+              value={photoUrl}
+              onChange={(e) => setPhotoUrl(e.target.value)}
+            />
 
-          <label className="label">About</label>
-          <textarea
-            className="textarea w-full"
-            placeholder="Tell us about yourself"
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-          />
+            <label className="label">About</label>
+            <textarea
+              className="textarea w-full"
+              placeholder="Tell us about yourself"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+            />
 
-          <label className="label">Skills (comma-separated)</label>
-          <input
-            type="text"
-            className="input w-full"
-            placeholder="e.g., React, Node.js, MongoDB"
-            value={skills}
-            onChange={(e) => setSkills(e.target.value)}
-          />
+            <label className="label">Skills (comma-separated)</label>
+            <input
+              type="text"
+              className="input w-full"
+              placeholder="e.g., React, Node.js, MongoDB"
+              value={skills}
+              onChange={(e) => setSkills(e.target.value)}
+            />
 
-          {error && <p className="text-red-500 mt-2">{error}</p>}
-          {success && <p className="text-green-500 mt-2">{success}</p>}
+            {error && <p className="text-red-500 mt-2">{error}</p>}
 
-          <button
-            className="btn btn-neutral mt-4 w-full"
-            onClick={handleUpdate}
-            disabled={!isChanged}
-          >
-            Update Profile
-          </button>
-        </fieldset>
+            <button
+              className="btn btn-neutral mt-4 w-full"
+              onClick={handleUpdate}
+              disabled={!isChanged}
+            >
+              Update Profile
+            </button>
+          </fieldset>
+        </div>
+        <UserCard
+          user={{
+            firstName,
+            lastName,
+            photoUrl:
+              photoUrl ||
+              "https://images.unsplash.com/vector-1742875355318-00d715aec3e8?q=80&w=1760&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            bio,
+            skills: skills
+              .split(",")
+              .map((s) => s.trim())
+              .filter((s) => s)
+          }}
+        />
       </div>
-      <UserCard
-        user={{
-          firstName,
-          lastName,
-          photoUrl:
-            photoUrl ||
-            "https://images.unsplash.com/vector-1742875355318-00d715aec3e8?q=80&w=1760&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          bio,
-          skills: skills
-            .split(",")
-            .map((s) => s.trim())
-            .filter((s) => s)
-        }}
-      />
-    </div>
+
+      <div>
+        {showToast && (
+          <Toast message="Profile updated successfully!" action="success" />
+        )}
+      </div>
+    </>
   );
 };
 
