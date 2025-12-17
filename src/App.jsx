@@ -5,6 +5,7 @@ import Profile from "./components/Profile";
 import Feed from "./components/Feed";
 import { Provider } from "react-redux";
 import appStore from "./utils/appStore";
+import Error404 from "./components/Error404";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} />
             </Route>
+            <Route path="*" element={<Error404 />} />
           </Routes>
         </BrowserRouter>
       </Provider>
