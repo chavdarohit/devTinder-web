@@ -7,7 +7,7 @@ import { removeUser } from "../utils/userSlice";
 import { removeFeed } from "../utils/feedSlice";
 
 export const Navbar = () => {
-  const user = useSelector((state) => state.user);
+  const { data: user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = async () => {
