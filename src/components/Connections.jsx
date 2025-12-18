@@ -56,7 +56,8 @@ const Connections = () => {
       </h1>
 
       {connections.map((connection) => {
-        const { firstName, lastName, bio, skills, age, gender } = connection;
+        const { firstName, lastName, bio, skills, age, gender, photoUrl } =
+          connection;
 
         return (
           <div
@@ -69,7 +70,7 @@ const Connections = () => {
                 <div className="flex-shrink-0">
                   <img
                     src={
-                      connection.photoUrl ||
+                      photoUrl ||
                       "https://images.unsplash.com/vector-1742875355318-00d715aec3e8?q=80&w=1760&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                     }
                     alt={`${firstName} ${lastName}`}

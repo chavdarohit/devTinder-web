@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { API_BASE_URL } from "../utils/constants";
 import { addUser } from "../utils/userSlice";
 import UserCard from "./UserCard";
-import Toast from "./Toast";
+import { showToast } from "../utils/toastSlice";
 
 const EditProfile = ({ user }) => {
   const dispatch = useDispatch();
@@ -26,7 +26,6 @@ const EditProfile = ({ user }) => {
   const [age, setAge] = useState(user.age || "");
   const [error, setError] = useState("");
   const [isChanged, setIsChanged] = useState(false);
-  const [showToast, setShowToast] = useState(false);
 
   // Check if form has changed
   useEffect(() => {
@@ -63,10 +62,14 @@ const EditProfile = ({ user }) => {
         { withCredentials: true }
       );
       dispatch(addUser(res.data));
-      setShowToast(true);
-      setTimeout(() => {
-        setShowToast(false);
-      }, 3000);
+
+      // Show success toast
+      dispatch(
+        showToast({
+          message: "Profile updated successfully!",
+          type: "success"
+        })
+      );
 
       // Update initial data after successful save
       setInitialData({
@@ -78,6 +81,14 @@ const EditProfile = ({ user }) => {
         age
       });
     } catch (err) {
+      // Show error toast
+      dispatch(
+        showToast({
+          message:
+            err.response?.data?.message || "Update failed. Please try again.",
+          type: "error"
+        })
+      );
       if (err.response && err.response.data) {
         setError(
           err.response.data.message || "Update failed. Please try again."
@@ -175,12 +186,6 @@ const EditProfile = ({ user }) => {
               .filter((s) => s)
           }}
         />
-      </div>
-
-      <div>
-        {showToast && (
-          <Toast message="Profile updated successfully!" action="success" />
-        )}
       </div>
     </>
   );
