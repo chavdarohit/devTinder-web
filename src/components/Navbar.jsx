@@ -5,6 +5,9 @@ import { API_BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { removeUser } from "../utils/userSlice";
 import { removeFeed } from "../utils/feedSlice";
+import { removeConnections } from "../utils/connectionSlice";
+import { removeRequest } from "../utils/requestSlice";
+import { hideToast } from "../utils/toastSlice";
 
 export const Navbar = () => {
   const { data: user } = useSelector((state) => state.user);
@@ -18,6 +21,9 @@ export const Navbar = () => {
     } finally {
       dispatch(removeUser());
       dispatch(removeFeed());
+      dispatch(removeConnections());
+      dispatch(removeRequest());
+      dispatch(hideToast());
       navigate("/login");
     }
   };
