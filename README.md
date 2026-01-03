@@ -25,13 +25,20 @@ If you are developing a production application, we recommend using TypeScript wi
 * Install Node version 16.17.0
 * Git clone
 * nginx installation
-   * sudo apt update
-   * sudo apt install nginx
-   * sudo systemctl start nginx
-   * sudo systemctl enable nginx
+     * sudo apt update
+     * sudo apt install nginx
+     * sudo systemctl start nginx
+     * sudo systemctl enable nginx
 * Frontend
     * npm install → dependencies install
     * npm run build
     * Copy code from dist(build files) to /var/www/html/
     * sudo scp -r dist/* /var/www/html/
     * Enabble port :80 of your instances in the ec2-> secruity group ->inbound rules
+* Backend
+    * updated DB password
+    * allowed ec2 instance public IP on mongodb server
+    * npm install pm2 -g
+    * pm2 start npm --name "devTinder-backend" -- start
+    * pm2 logs
+    * pm2 list, pm2 flush <name> , pm2 stop <name>, pm2 delete <name>
