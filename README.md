@@ -51,7 +51,7 @@ If you are developing a production application, we recommend using TypeScript wi
         server_name : PUBLIC_IP of instance;
     
         location /api/ {
-            proxy_pass http://PUBLIC_IP:3000; # Pass the request to the Node.js app
+            proxy_pass http://localhost:3000; # Pass the request to the Node.js app
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection 'upgrade';
