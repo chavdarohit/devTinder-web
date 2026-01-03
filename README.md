@@ -41,4 +41,4 @@ If you are developing a production application, we recommend using TypeScript wi
     * npm install pm2 -g
     * pm2 start npm --name "devTinder-backend" -- start
     * pm2 logs
-    * pm2 list, pm2 flush <name> , pm2 stop <name>, pm2 delete <name>
+    * pm2 list, pm2 flush Name , pm2 stop Name, pm2 delete Name
