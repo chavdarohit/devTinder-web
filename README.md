@@ -34,11 +34,29 @@ If you are developing a production application, we recommend using TypeScript wi
     * npm run build
     * Copy code from dist(build files) to /var/www/html/
     * sudo scp -r dist/* /var/www/html/
-    * Enabble port :80 of your instances in the ec2-> secruity group ->inbound rules
+    * Enable port :80 of your instances in the ec2-> secruity group ->inbound rules
 * Backend
     * updated DB password
     * allowed ec2 instance public IP on mongodb server
     * npm install pm2 -g
     * pm2 start npm --name "devTinder-backend" -- start
+    * Enable port :3000 of your instances in the ec2-> secruity group ->inbound rules
     * pm2 logs
     * pm2 list, pm2 flush Name , pm2 stop Name, pm2 delete Name
+    * config nginx `sudo nano /etc /nginx/sites-available/default`
+    * Modify the BASE_URL in the frontend to 'api/'
+* Nginx Configuration 
+    * config nginx `sudo nano /etc/nginx/sites-available/default`
+    *
+        server_name : PUBLIC_IP of instance;
+    
+        location /api/ {
+            proxy_pass http://localhost:3000/; # Pass the request to the Node.js app
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+        }
+    * after editing congif gile - restart nginx -> sudo systemctl restart nginx
+      
