@@ -21,7 +21,7 @@ const Body = () => {
 
     try {
       const res = await axios.get(API_BASE_URL + "/profile/view", {
-        withCredentials: true
+        withCredentials: true,
       });
       dispatch(addUser(res.data));
     } catch (error) {
