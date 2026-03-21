@@ -64,76 +64,110 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center my-10">
-      <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-        <h2 className="text-center ">{isLoginForm ? "Login" : "Sign Up"}</h2>
-        {!isLoginForm && (
-          <>
-            <label className="label">First Name</label>
-            <input
-              type="text"
-              className="input"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
-            <label className="label">Last Name</label>
-            <input
-              type="text"
-              className="input"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
-          </>
-        )}
-        <label className="label">Email</label>
-        <input
-          type="email"
-          className="input"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <label className="label">Password</label>
-        <input
-          type="password"
-          className="input"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <p className="text-red-500">{error}</p>
-        <button
-          className="btn btn-neutral mt-4"
-          onClick={isLoginForm ? handleLogin : handleSignUp}
-        >
-          {isLoginForm ? "Login" : "Sign Up"}
-        </button>
-        <p className="m-auto mt-2 ">
-          {isLoginForm ? (
-            <>
-              Don't have an account? .
-              <button
-                className="text-blue-500 underline cursor-pointer"
-                onClick={() => setIsLoginForm(false)}
-              >
-                Sign Up
-              </button>
-            </>
-          ) : (
-            <>
-              Already have an account?{" "}
-              <button
-                className="text-blue-500 underline cursor-pointer "
-                onClick={() => setIsLoginForm(true)}
-              >
-                Login
-              </button>
-            </>
+    <div className="flex justify-center grow items-center min-h-[75vh] px-4 py-10 animate-fade-in relative w-full">
+      <div className="modern-card w-full max-w-md p-8 sm:p-10 shadow-2xl relative overflow-hidden bg-base-100/90 backdrop-blur-md">
+        
+        {/* Decorative background blurs */}
+        <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-48 h-48 bg-secondary/10 rounded-full blur-2xl pointer-events-none"></div>
+        
+        <div className="relative z-10 flex flex-col w-full gap-4">
+          <div className="text-center mb-6">
+            <h2 className="text-3xl font-extrabold text-base-content tracking-tight">
+              {isLoginForm ? "Welcome Back" : "Join DevTinder"}
+            </h2>
+            <p className="text-base-content/60 mt-2 text-sm">
+              {isLoginForm ? "Sign in to connect with amazing developers." : "Create an account to start your journey."}
+            </p>
+          </div>
+
+          {!isLoginForm && (
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col flex-1 gap-1">
+                <label className="text-sm font-semibold text-base-content/80 ml-1">First Name</label>
+                <input
+                  type="text"
+                  className="input input-bordered w-full focus:input-primary transition-all rounded-xl"
+                  placeholder="John"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col flex-1 gap-1">
+                <label className="text-sm font-semibold text-base-content/80 ml-1">Last Name</label>
+                <input
+                  type="text"
+                  className="input input-bordered w-full focus:input-primary transition-all rounded-xl"
+                  placeholder="Doe"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
+            </div>
           )}
-        </p>
-      </fieldset>
+          
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-base-content/80 ml-1">Email</label>
+            <input
+              type="email"
+              className="input input-bordered w-full focus:input-primary transition-all rounded-xl"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-base-content/80 ml-1">Password</label>
+            <input
+              type="password"
+              className="input input-bordered w-full focus:input-primary transition-all rounded-xl"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          {error && (
+            <div className="bg-error/10 text-error text-sm p-3 rounded-xl border border-error/20 font-medium">
+              {error}
+            </div>
+          )}
+          
+          <button
+            className="btn btn-primary w-full mt-4 rounded-full shadow-lg hover:shadow-primary/30 transition-shadow font-bold text-base"
+            onClick={isLoginForm ? handleLogin : handleSignUp}
+          >
+            {isLoginForm ? "Sign In" : "Create Account"}
+          </button>
+          
+          <div className="divider text-base-content/40 text-sm mt-4">OR</div>
+          
+          <p className="text-center text-sm mt-2 text-base-content/70">
+            {isLoginForm ? (
+              <>
+                Don't have an account?{" "}
+                <button
+                  className="text-primary font-bold hover:underline cursor-pointer focus:outline-none transition-colors ml-1"
+                  onClick={() => setIsLoginForm(false)}
+                >
+                  Sign Up
+                </button>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <button
+                  className="text-primary font-bold hover:underline cursor-pointer focus:outline-none transition-colors ml-1"
+                  onClick={() => setIsLoginForm(true)}
+                >
+                  Sign In
+                </button>
+              </>
+            )}
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
