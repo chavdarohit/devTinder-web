@@ -9,6 +9,7 @@ import Error404 from "./components/Error404";
 import Connections from "./components/Connections";
 import Requests from "./components/Requests";
 import Premium from "./components/Premium";
+import Chat from "./components/Chat";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
               <Route path="/connections" element={<Connections />} />
               <Route path="/requests" element={<Requests />} />
               <Route path="/premium" element={<Premium />} />
+              <Route path="/chat/:toUserId" element={<Chat />} />
             </Route>
             <Route path="*" element={<Error404 />} />
           </Routes>

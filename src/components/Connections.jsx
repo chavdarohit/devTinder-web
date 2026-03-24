@@ -3,11 +3,12 @@ import { API_BASE_URL } from "../utils/constants";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections, setLoading } from "../utils/connectionSlice";
+import { Link } from "react-router-dom";
 
 const Connections = () => {
   const dispatch = useDispatch();
   const { data: connections, loading } = useSelector(
-    (state) => state.connection
+    (state) => state.connection,
   );
 
   const fetchConnections = async () => {
@@ -46,12 +47,27 @@ const Connections = () => {
     return (
       <div className="flex flex-col items-center justify-center my-20 animate-fade-in px-4 text-center">
         <div className="w-24 h-24 bg-base-200 rounded-full flex items-center justify-center mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-12 w-12 text-base-content/30"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+            />
           </svg>
         </div>
-        <h1 className="font-extrabold text-3xl mb-2 text-base-content">No Connections Yet</h1>
-        <p className="text-base-content/60">Start exploring the feed and making connections!</p>
+        <h1 className="font-extrabold text-3xl mb-2 text-base-content">
+          No Connections Yet
+        </h1>
+        <p className="text-base-content/60">
+          Start exploring the feed and making connections!
+        </p>
       </div>
     );
   }
@@ -101,7 +117,9 @@ const Connections = () => {
 
               {bio && (
                 <p className="text-sm text-base-content/80 line-clamp-3 mb-4 grow relative">
-                  <span className="absolute -left-1 -top-1 text-2xl text-primary/20 font-serif leading-none">"</span>
+                  <span className="absolute -left-1 -top-1 text-2xl text-primary/20 font-serif leading-none">
+                    "
+                  </span>
                   <span className="pl-4 italic">{bio}</span>
                 </p>
               )}
@@ -109,7 +127,10 @@ const Connections = () => {
               {skills && skills.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-base-200/50">
                   {skills.slice(0, 3).map((skill, i) => (
-                    <span key={i} className="text-xs font-semibold px-2 py-1 bg-base-200 text-base-content rounded-md">
+                    <span
+                      key={i}
+                      className="text-xs font-semibold px-2 py-1 bg-base-200 text-base-content rounded-md"
+                    >
                       {skill}
                     </span>
                   ))}
@@ -120,10 +141,12 @@ const Connections = () => {
                   )}
                 </div>
               )}
-              
-              <button className="btn btn-outline btn-sm w-full mt-4 rounded-full hover:bg-primary hover:text-white hover:border-primary transition-colors">
-                Send Message
-              </button>
+
+              <Link to={`/chat/${connection._id}`}>
+                <button className="btn btn-outline btn-sm w-full mt-4 rounded-full hover:bg-primary hover:text-white hover:border-primary transition-colors">
+                  Send Message
+                </button>
+              </Link>
             </div>
           );
         })}

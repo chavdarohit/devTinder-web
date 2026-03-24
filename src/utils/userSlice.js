@@ -5,7 +5,7 @@ const userSlice = createSlice({
   initialState: {
     data: null,
     loading: true,
-    error: null
+    error: null,
   },
   reducers: {
     setLoading: (state, action) => {
@@ -24,8 +24,8 @@ const userSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
       state.loading = false;
-    }
-  }
+    },
+  },
 });
 
 export const { addUser, removeUser, setLoading, setError } = userSlice.actions;

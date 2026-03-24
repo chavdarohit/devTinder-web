@@ -32,14 +32,20 @@ export const Navbar = () => {
   return (
     <div className="navbar glass-nav sticky top-0 z-50 transition-all duration-300 px-2 sm:px-6 shadow-sm animate-fade-in text-base-content">
       <div className="flex-1">
-        <Link to={user ? "/" : "/login"} className="btn btn-ghost text-2xl font-extrabold tracking-tight hover:scale-105 transition-transform text-primary">
+        <Link
+          to={user ? "/" : "/login"}
+          className="btn btn-ghost text-2xl font-extrabold tracking-tight hover:scale-105 transition-transform text-primary"
+        >
           DevTinder
         </Link>
       </div>
       {user && (
-        <div className="flex-none gap-2 items-center">
+        <div className="flex-none flex items-center gap-2">
           <h3 className="hidden md:block font-medium text-base-content/80 mr-4">
-            Welcome, <span className="font-bold text-base-content">{user.firstName}</span>
+            Welcome,{" "}
+            <span className="font-bold text-base-content">
+              {user.firstName}
+            </span>
           </h3>
           <div className="dropdown dropdown-end">
             <div
@@ -66,23 +72,46 @@ export const Navbar = () => {
                 <span className="font-semibold px-2">Hi, {user.firstName}</span>
               </li>
               <li>
-                <Link to="/profile" className="justify-between hover:bg-base-200 rounded-lg py-2 transition-colors">
+                <Link
+                  to="/profile"
+                  className="justify-between hover:bg-base-200 rounded-lg py-2 transition-colors"
+                >
                   Profile
                   <span className="badge badge-primary badge-sm">New</span>
                 </Link>
               </li>
               <li>
-                <Link to="/connections" className="hover:bg-base-200 rounded-lg py-2 transition-colors">Connections</Link>
+                <Link
+                  to="/connections"
+                  className="hover:bg-base-200 rounded-lg py-2 transition-colors"
+                >
+                  Connections
+                </Link>
               </li>
               <li>
-                <Link to="/requests" className="hover:bg-base-200 rounded-lg py-2 transition-colors">Requests</Link>
+                <Link
+                  to="/requests"
+                  className="hover:bg-base-200 rounded-lg py-2 transition-colors"
+                >
+                  Requests
+                </Link>
               </li>
               <li>
-                <Link to="/premium" className="hover:bg-base-200 rounded-lg py-2 transition-colors text-warning font-semibold">Premium</Link>
+                <Link
+                  to="/premium"
+                  className="hover:bg-base-200 rounded-lg py-2 transition-colors text-warning font-semibold"
+                >
+                  Premium
+                </Link>
               </li>
               <div className="divider my-0"></div>
               <li>
-                <a onClick={handleLogout} className="hover:bg-error/10 hover:text-error rounded-lg py-2 transition-colors font-medium">Logout</a>
+                <a
+                  onClick={handleLogout}
+                  className="hover:bg-error/10 hover:text-error rounded-lg py-2 transition-colors font-medium"
+                >
+                  Logout
+                </a>
               </li>
             </ul>
           </div>
