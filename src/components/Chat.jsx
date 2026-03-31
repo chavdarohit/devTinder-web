@@ -1,33 +1,74 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { createSocketConnection } from "../utils/socket";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { API_BASE_URL } from "../utils/constants";
 
 const Chat = () => {
   const { toUserId } = useParams();
+  const location = useLocation();
+  const receiverName = location.state?.receiverName || "Unknown";
 
   const user = useSelector((store) => store.user);
   // Simulated initial chat state.
   // In reality, you will fetch these from your backend via Socket.io / API.
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [error, setError] = useState(null);
   const chatContainerRef = useRef(null);
 
   const fromUserId = user?.data?._id;
+
+  useEffect(() => {
+    const fetchChatMessages = async () => {
+      let chat = {};
+      try {
+        chat = await axios.get(`${API_BASE_URL}/chat/${toUserId}`, {
+          withCredentials: true,
+        });
+        setError(null);
+      } catch (err) {
+        if (err.response?.status === 500) {
+          setError("Can't connect to server. Please try again later.");
+        } else if (err.response?.status === 403) {
+          setError(
+            err.response?.data?.message || "You cannot message this user.",
+          );
+        } else {
+          setError("Something went wrong. Please try again later.");
+        }
+      }
+      if (chat?.data?.chat?.messages) {
+        const chatMessages = chat.data.chat.messages.map((msg) => {
+          return {
+            senderId: msg.senderId?._id || msg.senderId,
+            senderName: msg.senderId?.firstName
+              ? `${msg.senderId.firstName} ${msg.senderId.lastName}`
+              : "Unknown",
+            text: msg.text,
+            time: msg.time,
+          };
+        });
+        setMessages(chatMessages);
+      }
+    };
+    fetchChatMessages();
+  }, [toUserId]);
 
   useEffect(() => {
     if (!fromUserId || !toUserId) return;
     const socket = createSocketConnection();
     // As soon as the page loads, the socket connection is made, and joinChat event is emitted
 
-    socket.emit("joinChat", { fromUserId, toUserId });
+    socket.emit("joinChat", { senderId: fromUserId, receiverId: toUserId });
 
     socket.on(
       "messageReceived",
-      ({ id, text, senderName, sender, receiver, time }) => {
+      ({ text, senderId, receiverId, time, senderName }) => {
         setMessages((prevMessages) => [
           ...prevMessages,
-          { id, text, senderName, sender, receiver, time },
+          { text, senderId, receiverId, time, senderName },
         ]);
       },
     );
@@ -52,15 +93,14 @@ const Chat = () => {
     const socket = createSocketConnection();
 
     socket.emit("sendMessage", {
-      id: Date.now(),
       text: newMessage,
-      senderName: `${user?.data?.firstName} ${user?.data?.lastName}`,
-      sender: fromUserId,
+      senderId: fromUserId,
       time: new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
       }),
-      receiver: toUserId,
+      receiverId: toUserId,
+      senderName: user?.data?.firstName + " " + user?.data?.lastName,
     });
 
     setNewMessage("");
@@ -103,7 +143,7 @@ const Chat = () => {
             </div>
             <div className="flex flex-col">
               <h2 className="text-xl font-extrabold text-base-content leading-tight">
-                Match User
+                {receiverName}
               </h2>
               <span className="text-xs font-semibold text-success tracking-wide">
                 Active now
@@ -158,12 +198,12 @@ const Chat = () => {
             </span>
           </div>
 
-          {messages.map((msg) => (
+          {messages.map((msg, idx) => (
             <div
-              key={msg.id}
-              className={`chat ${msg.sender === fromUserId ? "chat-end" : "chat-start"} animate-slide-up`}
+              key={idx}
+              className={`chat ${msg.senderId === fromUserId ? "chat-end" : "chat-start"} animate-slide-up`}
             >
-              {msg.sender !== fromUserId ? (
+              {msg.senderId !== fromUserId ? (
                 <div className="chat-image avatar hidden sm:block">
                   <div className="w-10 rounded-full">
                     <img
@@ -183,19 +223,23 @@ const Chat = () => {
                 </div>
               )}
               <div className="chat-header mb-1 text-xs opacity-60">
-                {msg.sender === fromUserId ? "You" : msg.senderName}
+                {msg.senderId === fromUserId
+                  ? "You"
+                  : msg.senderName
+                    ? msg.senderName
+                    : "Unknown"}
                 <time className="text-xs opacity-50 ml-2">{msg.time}</time>
               </div>
               <div
                 className={`chat-bubble shadow-sm ${
-                  msg.sender === fromUserId
+                  msg.senderId === fromUserId
                     ? "bg-primary text-primary-content"
                     : "bg-base-100 text-base-content border border-base-200"
                 }`}
               >
                 {msg.text}
               </div>
-              {msg.sender === fromUserId && (
+              {msg.senderId === fromUserId && (
                 <div className="chat-footer opacity-50 text-xs mt-1">
                   Delivered
                 </div>
@@ -205,52 +249,58 @@ const Chat = () => {
         </div>
 
         {/* Message Input Compositor */}
-        <div className="bg-base-100 p-4 border-t border-base-200 shadow-[0_-4px_6px_-1px_rgb(0,0,0,0.05)] shrink-0 z-10">
-          <form
-            onSubmit={handleSendMessage}
-            className="flex items-center gap-2 max-w-full"
-          >
-            <button
-              type="button"
-              className="btn btn-circle btn-ghost text-base-content/50 hover:text-primary transition-colors shrink-0"
+        <div className="bg-base-100 p-4 border-t border-base-200 shadow-[0_-4px_6px_-1px_rgb(0,0,0,0.05)] shrink-0 z-10 flex items-center justify-center min-h-[76px]">
+          {error ? (
+            <div className="text-center py-2 text-base-content/50 font-medium tracking-wide">
+              {error}
+            </div>
+          ) : (
+            <form
+              onSubmit={handleSendMessage}
+              className="flex items-center gap-2 max-w-full w-full"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+              <button
+                type="button"
+                className="btn btn-circle btn-ghost text-base-content/50 hover:text-primary transition-colors shrink-0"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                />
-              </svg>
-            </button>
-            <input
-              type="text"
-              placeholder="Type your message..."
-              className="input input-bordered w-full rounded-full bg-base-200/50 focus:bg-base-100 focus:border-primary transition-all shadow-inner"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="btn btn-circle btn-primary shadow-lg shadow-primary/30 hover:scale-105 transition-transform shrink-0"
-              disabled={!newMessage.trim()}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 rotate-90"
-                viewBox="0 0 20 20"
-                fill="currentColor"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                  />
+                </svg>
+              </button>
+              <input
+                type="text"
+                placeholder="Type your message..."
+                className="input input-bordered w-full rounded-full bg-base-200/50 focus:bg-base-100 focus:border-primary transition-all shadow-inner"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="btn btn-circle btn-primary shadow-lg shadow-primary/30 hover:scale-105 transition-transform shrink-0"
+                disabled={!newMessage.trim()}
               >
-                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-              </svg>
-            </button>
-          </form>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 rotate-90"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                </svg>
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </div>

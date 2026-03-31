@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { API_BASE_URL } from "../utils/constants";
 import UserCard from "./UserCard";
+import Loader from "./Loader";
 
 const Feed = () => {
   const { data: feed, loading } = useSelector((state) => state.feed);
@@ -31,7 +32,7 @@ const Feed = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <span className="loading loading-spinner loading-lg"></span>
+        <Loader />
       </div>
     );
   }

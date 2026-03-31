@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addUser, setLoading, setError } from "../utils/userSlice";
 import { useEffect } from "react";
 import Toast from "./Toast";
+import Loader from "./Loader";
 
 const Body = () => {
   const dispatch = useDispatch();
@@ -38,7 +39,7 @@ const Body = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <span className="loading loading-spinner loading-lg"></span>
+        <Loader />
       </div>
     );
   }

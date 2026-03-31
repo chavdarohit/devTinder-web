@@ -4,6 +4,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections, setLoading } from "../utils/connectionSlice";
 import { Link } from "react-router-dom";
+import Loader from "./Loader";
 
 const Connections = () => {
   const dispatch = useDispatch();
@@ -34,7 +35,7 @@ const Connections = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <span className="loading loading-spinner text-primary loading-lg"></span>
+        <Loader />
       </div>
     );
   }
@@ -142,7 +143,10 @@ const Connections = () => {
                 </div>
               )}
 
-              <Link to={`/chat/${connection._id}`}>
+              <Link
+                to={`/chat/${connection._id}`}
+                state={{ receiverName: `${firstName} ${lastName}` }}
+              >
                 <button className="btn btn-outline btn-sm w-full mt-4 rounded-full hover:bg-primary hover:text-white hover:border-primary transition-colors">
                   Send Message
                 </button>
