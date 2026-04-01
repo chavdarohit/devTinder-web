@@ -17,6 +17,7 @@ const Chat = () => {
   const [newMessage, setNewMessage] = useState("");
   const [error, setError] = useState(null);
   const chatContainerRef = useRef(null);
+  const [isUserActive, setIsUserActive] = useState(false);
 
   const fromUserId = user?.data?._id;
 
@@ -73,9 +74,21 @@ const Chat = () => {
       },
     );
 
-    // When the component unmounts, the socket connection is closed
+    // Listen for other users' status changes
+    socket.on("status-changed", ({ userOnlineList }) => {
+      if (userOnlineList[toUserId]) {
+        setIsUserActive(true);
+      } else {
+        setIsUserActive(false);
+      }
+    });
+
+    // When the component unmounts or user navigates away, cleanly remove the listeners
+    // instead of destroying the entire physical TCP connection.
     return () => {
-      socket.disconnect();
+      console.log("leaving chat component. cleaning listeners...");
+      socket.off("messageReceived");
+      socket.off("status-changed");
     };
   }, [fromUserId, toUserId]);
 
@@ -132,7 +145,9 @@ const Chat = () => {
               </svg>
             </Link>
             <div className="relative indicator">
-              <span className="indicator-item badge badge-success badge-xs border-white absolute bottom-1 right-1"></span>
+              <span
+                className={`indicator-item border-white absolute bottom-1 right-1 ${isUserActive ? "badge badge-success badge-xs" : "badge-error"}`}
+              ></span>
               <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-base-200 bg-base-300">
                 <img
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
@@ -146,7 +161,7 @@ const Chat = () => {
                 {receiverName}
               </h2>
               <span className="text-xs font-semibold text-success tracking-wide">
-                Active now
+                {isUserActive ? "Active now" : "Offline"}
               </span>
             </div>
           </div>

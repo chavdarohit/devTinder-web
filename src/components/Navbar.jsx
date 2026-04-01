@@ -8,6 +8,7 @@ import { removeFeed } from "../utils/feedSlice";
 import { removeConnections } from "../utils/connectionSlice";
 import { removeRequest } from "../utils/requestSlice";
 import { hideToast } from "../utils/toastSlice";
+import { createSocketConnection } from "../utils/socket";
 
 export const Navbar = () => {
   const { data: user } = useSelector((state) => state.user);
@@ -17,6 +18,9 @@ export const Navbar = () => {
   const handleLogout = async () => {
     try {
       await axios.post(API_BASE_URL + "/logout", {}, { withCredentials: true });
+
+      const socket = createSocketConnection();
+      socket.disconnect();
     } catch (error) {
       console.error("Error during logout:", error);
     } finally {

@@ -9,6 +9,8 @@ import { useEffect } from "react";
 import Toast from "./Toast";
 import Loader from "./Loader";
 
+import { createSocketConnection } from "../utils/socket";
+
 const Body = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -35,6 +37,14 @@ const Body = () => {
   useEffect(() => {
     fetchUser();
   }, []);
+
+  // Globally track online status when user is logged in
+  useEffect(() => {
+    if (userData) {
+      const socket = createSocketConnection();
+      socket.emit("goOnline", { userId: userData._id });
+    }
+  }, [userData]);
 
   if (loading) {
     return (
